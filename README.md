@@ -1,6 +1,6 @@
 # Kiddlex 2nd Landing Page
 
-Cloudflare Pages landing-page manager with shared images and an admin panel.
+Cloudflare Pages landing manager — no KV or D1 required.
 
 ## Public routes
 - /deru
@@ -19,38 +19,34 @@ Upload these exact files into:
 through
 `public/assets/18.webp`
 
-All 8 slugs and every custom domain attached to the same Pages project use this shared folder.
+All slugs and all custom domains attached to this Pages project use the same shared image folder.
 
-## Cloudflare Pages settings
-- Framework preset: None
-- Production branch: main
+## Cloudflare Pages build settings
+- Production branch: `main`
+- Framework preset: `None`
 - Build command: `bash build.sh`
 - Build output directory: `public`
+- Root directory: leave blank
 
-## Required Cloudflare binding
-Create a KV namespace and bind it to this Pages project with the exact binding name:
-
-`LANDING_CONFIG`
-
-## Required environment variables
-Add these under the Pages project environment variables:
-
-- `ADMIN_PASSWORD` = password for /admin/
-- `SESSION_SECRET` = any long random private string
+## Environment variables / secrets
+Add these in Cloudflare Pages:
+- `GITHUB_OWNER=fbstoryaccoutn1-jpg`
+- `GITHUB_REPO=kiddlex2ndlanindgpage`
+- `GITHUB_BRANCH=main`
+- `GITHUB_TOKEN=<fine-grained GitHub token with Contents read/write permission for this repo>`
+- `ADMIN_PASSWORD=<your admin password>`
+- `SESSION_SECRET=<long random private string>`
 
 ## Admin panel
-Open:
+Open `/admin/`.
 
-`/admin/`
-
-Each slug has:
+The admin panel edits:
 - Destination URL
-- Redirect delay in seconds
+- Redirect delay
 
-Saving from the admin panel updates KV immediately; no code edit or redeploy is required.
+Saving writes the settings to `data/config.json` in GitHub. No KV namespace is used.
 
 ## Landing behavior
 - Desktop/laptop: redirects to Google with the slug in UTM medium.
-- Mobile: randomly shows one image from 1.webp to 18.webp.
-- After the configured delay, mobile redirects to that slug's destination URL.
-- Page title and visual presentation remain fixed.
+- Mobile: shows one random image from 1.webp to 18.webp.
+- After the configured delay, mobile redirects to the slug destination.
