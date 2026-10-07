@@ -1,15 +1,12 @@
 {
   "version": 1,
   "include": [
-    "/api/*",
-    "/deru",
-    "/gyro",
-    "/hemari",
-    "/mari",
-    "/million",
-    "/nari",
-    "/tank",
-    "/zuberi"
+    "/*"
   ],
-  "exclude": []
+  "exclude": [
+    "/",
+    "/admin",
+    "/admin/*",
+    "/assets/*"
+  ]
 }
