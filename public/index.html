@@ -3,47 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kiddlex Landing Manager</title>
+  <title>ShortLink — Simple URL Shortener</title>
+  <meta name="description" content="Create cleaner, easier-to-share links in seconds.">
   <style>
     *{box-sizing:border-box}
-    body{margin:0;font-family:Arial,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .wrap{width:100%;max-width:920px}
-    .card{background:#111827;border:1px solid #273449;border-radius:18px;padding:28px;box-shadow:0 18px 50px #0004}
-    h1{margin:0 0 10px;font-size:32px}
-    p{color:#94a3b8;line-height:1.6}
-    .actions{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
-    a{color:#fff;text-decoration:none}
-    .btn{display:inline-block;background:#2563eb;padding:12px 18px;border-radius:10px;font-weight:700}
-    .btn.secondary{background:#334155}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
-    .slug{display:block;background:#0b1220;border:1px solid #334155;padding:12px;border-radius:10px;text-align:center}
-    .note{font-size:13px;color:#64748b;margin-top:18px}
+    body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(135deg,#f8fafc,#eef2ff);color:#0f172a}
+    .nav{max-width:1120px;margin:auto;padding:24px 20px;display:flex;align-items:center;justify-content:space-between}
+    .brand{font-weight:800;font-size:22px;letter-spacing:-.4px}
+    .badge{font-size:13px;color:#475569}
+    .hero{min-height:calc(100vh - 80px);display:flex;align-items:center;justify-content:center;padding:40px 20px}
+    .box{width:100%;max-width:760px;text-align:center}
+    h1{font-size:clamp(40px,7vw,72px);line-height:1.02;margin:0 0 18px;letter-spacing:-2px}
+    p{font-size:18px;color:#64748b;line-height:1.7;margin:0 auto 32px;max-width:620px}
+    .shortener{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:14px;display:flex;gap:10px;box-shadow:0 20px 60px rgba(15,23,42,.08)}
+    .shortener input{flex:1;border:0;outline:0;font-size:16px;padding:14px 16px;background:#f8fafc;border-radius:12px}
+    .shortener button{border:0;background:#4f46e5;color:#fff;font-weight:700;padding:0 24px;border-radius:12px;cursor:pointer}
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px;text-align:left}
+    .feature{background:rgba(255,255,255,.75);border:1px solid #e2e8f0;border-radius:14px;padding:18px}
+    .feature strong{display:block;margin-bottom:6px}
+    .feature span{font-size:14px;color:#64748b;line-height:1.5}
+    .note{margin-top:18px;font-size:13px;color:#94a3b8}
+    @media(max-width:700px){
+      .shortener{flex-direction:column}
+      .shortener button{padding:14px}
+      .features{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Kiddlex Landing Manager</h1>
-      <p>Manage landing-page destinations and redirect timing from the admin panel. The public landing routes use the shared image set from <code>/assets/1.webp</code> through <code>/assets/18.webp</code>.</p>
-
-      <div class="actions">
-        <a class="btn" href="/admin/">Open Admin Panel</a>
-        <a class="btn secondary" href="/tank">Test /tank</a>
-      </div>
-
-      <div class="grid">
-        <a class="slug" href="/deru">/deru</a>
-        <a class="slug" href="/gyro">/gyro</a>
-        <a class="slug" href="/hemari">/hemari</a>
-        <a class="slug" href="/mari">/mari</a>
-        <a class="slug" href="/million">/million</a>
-        <a class="slug" href="/nari">/nari</a>
-        <a class="slug" href="/tank">/tank</a>
-        <a class="slug" href="/zuberi">/zuberi</a>
-      </div>
-
-      <div class="note">Root homepage is separate from the landing-page template used by the slug routes.</div>
-    </div>
+  <div class="nav">
+    <div class="brand">ShortLink</div>
+    <div class="badge">Fast • Clean • Simple</div>
   </div>
+
+  <main class="hero">
+    <section class="box">
+      <h1>Shorten links.<br>Share smarter.</h1>
+      <p>Turn long, messy URLs into clean links that are easier to share anywhere.</p>
+
+      <div class="shortener">
+        <input type="url" placeholder="Paste a long URL here" aria-label="Long URL">
+        <button type="button" onclick="showDemo()">Shorten URL</button>
+      </div>
+
+      <div id="demo" class="note">Simple, fast and easy to use.</div>
+
+      <div class="features">
+        <div class="feature"><strong>Fast</strong><span>Create clean links in seconds.</span></div>
+        <div class="feature"><strong>Simple</strong><span>No clutter. Just a straightforward experience.</span></div>
+        <div class="feature"><strong>Shareable</strong><span>Cleaner links for social, chat and web.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function showDemo(){
+      document.getElementById('demo').textContent='URL shortening is currently available through our managed links.';
+    }
+  </script>
 </body>
 </html>
