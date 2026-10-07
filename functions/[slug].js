@@ -9,11 +9,10 @@ function cleanSlug(value) {
     .slice(0, 80);
 }
 
-function landingHtml(slug, destination, delay) {
+function landingHtml(slug, destination, delay, desktopDestination) {
   const images = Array.from({ length: 18 }, (_, i) => "/assets/" + (i + 1) + ".webp");
-  const desktopURL =
-    "https://www.google.com/?utm_source=jack&utm_medium=" +
-    encodeURIComponent(slug.toUpperCase());
+  const desktopURL = desktopDestination ||
+    ("https://www.google.com/?utm_source=jack&utm_medium=" + encodeURIComponent(slug.toUpperCase()));
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -147,7 +146,9 @@ export async function onRequest({ params, env }) {
       ? rawDelay
       : 3000;
 
-  return new Response(landingHtml(slug, destination, delay), {
+  const desktopDestination = item.desktopDestination ? String(item.desktopDestination) : "";
+
+  return new Response(landingHtml(slug, destination, delay, desktopDestination), {
     headers: {
       "content-type": "text/html; charset=UTF-8",
       "cache-control": "no-store, max-age=0"
