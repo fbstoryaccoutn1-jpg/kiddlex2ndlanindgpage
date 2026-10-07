@@ -1,1 +1,42 @@
-{}
+{
+  "deru": {
+    "linkId": "legacy-deru",
+    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=DERU",
+    "delay": 3000
+  },
+  "gyro": {
+    "linkId": "legacy-gyro",
+    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=GYRO",
+    "delay": 3000
+  },
+  "hemari": {
+    "linkId": "legacy-hemari",
+    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=HEMARI",
+    "delay": 3000
+  },
+  "mari": {
+    "linkId": "legacy-mari",
+    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=MARI",
+    "delay": 3000
+  },
+  "million": {
+    "linkId": "legacy-million",
+    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=MILLION",
+    "delay": 3000
+  },
+  "nari": {
+    "linkId": "legacy-nari",
+    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=NARI",
+    "delay": 3000
+  },
+  "tank": {
+    "linkId": "legacy-tank",
+    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=TANK",
+    "delay": 3000
+  },
+  "zuberi": {
+    "linkId": "legacy-zuberi",
+    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=ZUBERI",
+    "delay": 3000
+  }
+}
