@@ -1,1 +1,49 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Please wait...</title></head><body></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kiddlex Landing Manager</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .wrap{width:100%;max-width:920px}
+    .card{background:#111827;border:1px solid #273449;border-radius:18px;padding:28px;box-shadow:0 18px 50px #0004}
+    h1{margin:0 0 10px;font-size:32px}
+    p{color:#94a3b8;line-height:1.6}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+    a{color:#fff;text-decoration:none}
+    .btn{display:inline-block;background:#2563eb;padding:12px 18px;border-radius:10px;font-weight:700}
+    .btn.secondary{background:#334155}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+    .slug{display:block;background:#0b1220;border:1px solid #334155;padding:12px;border-radius:10px;text-align:center}
+    .note{font-size:13px;color:#64748b;margin-top:18px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Kiddlex Landing Manager</h1>
+      <p>Manage landing-page destinations and redirect timing from the admin panel. The public landing routes use the shared image set from <code>/assets/1.webp</code> through <code>/assets/18.webp</code>.</p>
+
+      <div class="actions">
+        <a class="btn" href="/admin/">Open Admin Panel</a>
+        <a class="btn secondary" href="/tank">Test /tank</a>
+      </div>
+
+      <div class="grid">
+        <a class="slug" href="/deru">/deru</a>
+        <a class="slug" href="/gyro">/gyro</a>
+        <a class="slug" href="/hemari">/hemari</a>
+        <a class="slug" href="/mari">/mari</a>
+        <a class="slug" href="/million">/million</a>
+        <a class="slug" href="/nari">/nari</a>
+        <a class="slug" href="/tank">/tank</a>
+        <a class="slug" href="/zuberi">/zuberi</a>
+      </div>
+
+      <div class="note">Root homepage is separate from the landing-page template used by the slug routes.</div>
+    </div>
+  </div>
+</body>
+</html>
