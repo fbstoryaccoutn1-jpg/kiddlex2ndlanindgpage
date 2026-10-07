@@ -1,4 +1,3 @@
-const LEGACY_SLUGS = ["deru","gyro","hemari","mari","million","nari","tank","zuberi"];
 const RESERVED_SLUGS = new Set(["admin","api","assets","functions","404","favicon.ico","robots.txt","sitemap.xml"]);
 
 function cleanSlug(value) {
@@ -10,16 +9,11 @@ function cleanSlug(value) {
     .slice(0, 80);
 }
 
-function defaultItem(slug) {
-  return {
-    destination: "https://bb.urlxx341.com?utm_source=jack&utm_medium=" + slug.toUpperCase(),
-    delay: 3000
-  };
-}
-
 function landingHtml(slug, destination, delay) {
   const images = Array.from({ length: 18 }, (_, i) => "/assets/" + (i + 1) + ".webp");
-  const desktopURL = "https://www.google.com/?utm_source=jack&utm_medium=" + encodeURIComponent(slug.toUpperCase());
+  const desktopURL =
+    "https://www.google.com/?utm_source=jack&utm_medium=" +
+    encodeURIComponent(slug.toUpperCase());
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -67,6 +61,7 @@ function landingHtml(slug, destination, delay) {
     }
   </style>
 </head>
+
 <body>
   <main class="landing">
     <img id="randomImage" src="" alt="Loading">
@@ -87,6 +82,7 @@ function landingHtml(slug, destination, delay) {
     } else {
       const randomIndex = Math.floor(Math.random() * images.length);
       document.getElementById("randomImage").src = images[randomIndex];
+
       setTimeout(function () {
         window.location.replace(mobileURL);
       }, redirectDelay);
@@ -97,30 +93,26 @@ function landingHtml(slug, destination, delay) {
 }
 
 async function loadConfig(env) {
-  const owner = env.GITHUB_OWNER;
-  const repo = env.GITHUB_REPO;
+  if (!env.GITHUB_OWNER || !env.GITHUB_REPO) return {};
+
   const branch = env.GITHUB_BRANCH || "main";
-  if (!owner || !repo) return {};
+  const headers = {
+    "Accept": "application/vnd.github+json",
+    "User-Agent": "kiddlex-landing",
+    "Cache-Control": "no-cache"
+  };
+  if (env.GITHUB_TOKEN) headers["Authorization"] = "Bearer " + env.GITHUB_TOKEN;
 
   try {
-    const headers = { "cache-control": "no-cache" };
-    if (env.GITHUB_TOKEN) headers.authorization = "Bearer " + env.GITHUB_TOKEN;
-
     const url =
       "https://api.github.com/repos/" +
-      encodeURIComponent(owner) + "/" +
-      encodeURIComponent(repo) +
+      encodeURIComponent(env.GITHUB_OWNER) + "/" +
+      encodeURIComponent(env.GITHUB_REPO) +
       "/contents/data/config.json?ref=" +
       encodeURIComponent(branch) +
-      "&ts=" + Date.now();
+      "&t=" + Date.now();
 
-    const r = await fetch(url, {
-      headers: {
-        ...headers,
-        accept: "application/vnd.github+json",
-        "user-agent": "kiddlex-landing"
-      }
-    });
+    const r = await fetch(url, { headers });
     if (!r.ok) return {};
 
     const j = await r.json();
@@ -132,18 +124,14 @@ async function loadConfig(env) {
   }
 }
 
-export async function onRequest(context) {
-  const slug = cleanSlug(context.params.slug);
+export async function onRequest({ params, env }) {
+  const slug = cleanSlug(params.slug);
   if (!slug || RESERVED_SLUGS.has(slug)) {
     return new Response("Not found", { status: 404 });
   }
 
-  const cfg = await loadConfig(context.env);
-  let item = cfg[slug];
-
-  if (!item && LEGACY_SLUGS.includes(slug)) {
-    item = defaultItem(slug);
-  }
+  const config = await loadConfig(env);
+  const item = config[slug];
 
   if (!item || !item.destination) {
     return new Response("Not found", {
@@ -154,9 +142,10 @@ export async function onRequest(context) {
 
   const destination = String(item.destination);
   const rawDelay = Number(item.delay);
-  const delay = Number.isFinite(rawDelay) && rawDelay >= 0 && rawDelay <= 60000
-    ? rawDelay
-    : 3000;
+  const delay =
+    Number.isFinite(rawDelay) && rawDelay >= 0 && rawDelay <= 60000
+      ? rawDelay
+      : 3000;
 
   return new Response(landingHtml(slug, destination, delay), {
     headers: {
