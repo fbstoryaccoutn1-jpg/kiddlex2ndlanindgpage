@@ -31,8 +31,9 @@
   },
   "nari": {
     "linkId": "legacy-nari",
-    "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=NARI",
-    "delay": 3000
+    "destination": "https://cric.booss12.com/?utm_source=Deepal&utm_medium=Vicky",
+    "delay": 3000,
+    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky"
   },
   "tank": {
     "linkId": "legacy-tank",
