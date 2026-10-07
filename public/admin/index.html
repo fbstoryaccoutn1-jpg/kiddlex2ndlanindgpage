@@ -6,18 +6,17 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0f172a;color:#e2e8f0;font-family:Arial,sans-serif}.wrap{max-width:980px;margin:40px auto;padding:20px}
 .card{background:#111827;border:1px solid #273449;border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 15px 40px #0003}
-h1{margin:0 0 8px}p{color:#94a3b8}input,select,button{font:inherit;border-radius:10px;border:1px solid #334155;padding:11px 12px}
-input,select{background:#0b1220;color:#fff;width:100%}button{background:#2563eb;color:#fff;border:0;cursor:pointer;font-weight:700}
-.row{display:grid;grid-template-columns:120px 1fr 150px 100px;gap:10px;align-items:center;margin:10px 0}.slug{font-weight:700}.msg{min-height:22px;color:#86efac}.error{color:#fca5a5}
-#panel{display:none}@media(max-width:760px){.row{grid-template-columns:1fr}.wrap{margin:10px auto;padding:12px}}
+h1{margin:0 0 8px}p{color:#94a3b8}input,button{font:inherit;border-radius:10px;border:1px solid #334155;padding:11px 12px}
+input{background:#0b1220;color:#fff;width:100%}button{background:#2563eb;color:#fff;border:0;cursor:pointer;font-weight:700}
+.row{display:grid;grid-template-columns:120px 1fr 140px 100px;gap:10px;align-items:center;margin:10px 0}.slug{font-weight:700}.msg{min-height:22px;color:#86efac}.error{color:#fca5a5}
+.small{font-size:12px;color:#94a3b8;margin-top:4px}#panel{display:none}@media(max-width:760px){.row{grid-template-columns:1fr}.wrap{margin:10px auto;padding:12px}}
 </style>
 </head>
 <body><div class="wrap">
 <div class="card" id="loginBox"><h1>Landing Admin</h1><p>Login to edit destination links and redirect delay.</p><input id="password" type="password" placeholder="Admin password"><br><br><button onclick="login()">Login</button><div id="loginMsg" class="msg"></div></div>
-<div id="panel"><div class="card"><h1>Landing Pages</h1><p>Presentation and shared images stay unchanged. Changes save instantly.</p><div id="rows"></div><div id="msg" class="msg"></div></div></div>
+<div id="panel"><div class="card"><h1>Landing Pages</h1><p>Shared images and landing presentation stay unchanged. Changes save instantly.</p><div id="rows"></div><div id="msg" class="msg"></div></div></div>
 </div>
 <script>
-const delays=[1000,2000,3000,4000,5000,7000,10000];
 async function login(){
  const password=document.getElementById("password").value;
  const r=await fetch("/api/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password})});
@@ -28,11 +27,13 @@ async function load(){
  const r=await fetch("/api/config");
  if(!r.ok)return;
  const d=await r.json();document.getElementById("loginBox").style.display="none";document.getElementById("panel").style.display="block";
- document.getElementById("rows").innerHTML=d.rows.map(x=>`<div class="row"><div class="slug">/${x.slug}</div><input id="u-${x.slug}" value="${esc(x.destination)}"><select id="d-${x.slug}">${delays.map(v=>`<option value="${v}" ${v==x.delay?"selected":""}>${v/1000} sec</option>`).join("")}</select><button onclick="save('${x.slug}')">Save</button></div>`).join("");
+ document.getElementById("rows").innerHTML=d.rows.map(x=>`<div class="row"><div class="slug">/${x.slug}</div><input id="u-${x.slug}" value="${esc(x.destination)}"><div><input id="d-${x.slug}" type="number" min="0" max="60" step="0.1" value="${Number(x.delay||3000)/1000}"><div class="small">seconds</div></div><button onclick="save('${x.slug}')">Save</button></div>`).join("");
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
 async function save(slug){
- const destination=document.getElementById("u-"+slug).value,delay=Number(document.getElementById("d-"+slug).value);
+ const destination=document.getElementById("u-"+slug).value;
+ const seconds=Number(document.getElementById("d-"+slug).value);
+ const delay=Math.round(seconds*1000);
  const r=await fetch("/api/config",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({slug,destination,delay})});
  const d=await r.json();const m=document.getElementById("msg");m.textContent=d.ok?`/${slug} saved ✓`:(d.error||"Save failed");m.className=d.ok?"msg":"msg error";
 }
