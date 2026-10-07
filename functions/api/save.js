@@ -45,6 +45,7 @@ function sanitizeLinks(input) {
     seenIds.add(linkId);
 
     const destination = cleanUrl(rawItem?.destination);
+    const desktopDestination = rawItem?.desktopDestination ? cleanUrl(rawItem.desktopDestination) : "";
     const delay = Number(rawItem?.delay);
     if (!Number.isFinite(delay) || delay < 0 || delay > 60000) {
       throw new Error("Delay must be between 0 and 60 seconds.");
@@ -53,6 +54,7 @@ function sanitizeLinks(input) {
     out[slug] = {
       linkId,
       destination,
+      ...(desktopDestination ? { desktopDestination } : {}),
       delay: Math.round(delay)
     };
   }
