@@ -38,7 +38,8 @@
   "tank": {
     "linkId": "legacy-tank",
     "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=TANK",
-    "delay": 3000
+    "delay": 3000,
+    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK"
   },
   "zuberi": {
     "linkId": "legacy-zuberi",
