@@ -1,42 +1,291 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Landing Admin</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Landing Manager — Admin</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0f172a;color:#e2e8f0;font-family:Arial,sans-serif}.wrap{max-width:980px;margin:40px auto;padding:20px}
-.card{background:#111827;border:1px solid #273449;border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 15px 40px #0003}
-h1{margin:0 0 8px}p{color:#94a3b8}input,button{font:inherit;border-radius:10px;border:1px solid #334155;padding:11px 12px}
-input{background:#0b1220;color:#fff;width:100%}button{background:#2563eb;color:#fff;border:0;cursor:pointer;font-weight:700}
-.row{display:grid;grid-template-columns:120px 1fr 140px 100px;gap:10px;align-items:center;margin:10px 0}.slug{font-weight:700}.msg{min-height:22px;color:#86efac}.error{color:#fca5a5}.head{display:flex;align-items:center;justify-content:space-between;gap:12px}.newbox{display:none;margin:18px 0;padding:16px;border:1px solid #334155;border-radius:14px;background:#0b1220}.newgrid{display:grid;grid-template-columns:160px 1fr 130px auto;gap:10px;align-items:end}
-.small{font-size:12px;color:#94a3b8;margin-top:4px}#panel{display:none}@media(max-width:760px){.row,.newgrid{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}.wrap{margin:10px auto;padding:12px}}
+:root{--bg:#070910;--panel:#101522;--stroke:#273249;--text:#f8fafc;--muted:#8f9bb0}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 5% 0%,rgba(139,92,246,.18),transparent 26%),radial-gradient(circle at 95% 8%,rgba(236,72,153,.12),transparent 26%),linear-gradient(145deg,#090d17,#070910 62%);color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{width:min(1180px,100%);margin:auto;padding:30px 18px 80px}.hidden{display:none!important}
+.card{background:linear-gradient(145deg,rgba(17,23,36,.96),rgba(12,17,28,.96));border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:20px;box-shadow:0 18px 48px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.025)}
+.login{max-width:430px;margin:11vh auto 0;padding:26px}.shell{display:grid;grid-template-columns:290px 1fr;gap:20px}.sidebar{position:sticky;top:18px;align-self:start}
+.brand{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:16px}h1,h2,h3{margin:0;letter-spacing:-.35px}.muted{color:var(--muted)}
+.pages{display:grid;gap:9px;margin-top:15px}.pageitem{padding:12px 13px;border:1px solid #273147;border-radius:15px;background:linear-gradient(145deg,#0d1320,#0a0f19);cursor:pointer;transition:.18s ease}
+.pageitem:hover{transform:translateY(-1px);border-color:#3a4866}.pageitem.active{border-color:rgba(139,92,246,.75);background:linear-gradient(145deg,rgba(139,92,246,.16),rgba(34,211,238,.06))}
+.pageitem strong{display:block}.pageitem small{color:#91a0b8}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.full{grid-column:1/-1}
+label{display:block;font-size:12px;font-weight:850;color:#cbd5e1;margin:0 0 7px}
+input{width:100%;padding:13px 14px;border-radius:14px;border:1px solid #2a354c;background:linear-gradient(145deg,#0b101a,#0a0f18);color:#fff;outline:none}
+input:focus{border-color:#7c68e8;box-shadow:0 0 0 3px rgba(139,92,246,.11)}
+button{border:1px solid transparent;border-radius:14px;padding:11px 15px;font-weight:850;cursor:pointer}
+.primary{background:linear-gradient(135deg,#8b5cf6,#ec4899);color:#fff}.secondary{background:linear-gradient(145deg,#202b40,#182235);border-color:#303c55;color:#fff}.danger{background:linear-gradient(145deg,#3a1723,#28121a);border-color:#55202f;color:#ff9fb3}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap}.section{margin-bottom:19px}.status{min-height:22px;color:#a5b0c3;margin-top:11px}.slugpreview{font-size:13px;color:#aab4c6;margin-top:7px;word-break:break-all}
+.notice{padding:13px 14px;border:1px solid rgba(34,211,238,.2);border-radius:14px;background:rgba(34,211,238,.06);color:#b9c7d8}
+@media(max-width:850px){.shell{grid-template-columns:1fr}.sidebar{position:static}.grid{grid-template-columns:1fr}.full{grid-column:auto}.top{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
-<body><div class="wrap">
-<div class="card" id="loginBox"><h1>Landing Admin</h1><p>Login to edit destination links and redirect delay.</p><input id="password" type="password" placeholder="Admin password"><br><br><button onclick="login()">Login</button><div id="loginMsg" class="msg"></div></div>
-<div id="panel"><div class="card"><div class="head"><div><h1>Landing Pages</h1><p>Shared images and landing presentation stay unchanged. Changes save instantly.</p></div><button onclick="showNew()">+ New Link</button></div><div id="newBox" class="newbox"><div class="newgrid"><div><div class="small">Slug</div><input id="newSlug" placeholder="new-link"></div><div><div class="small">Destination URL</div><input id="newDestination" placeholder="https://example.com/..."></div><div><div class="small">Delay (seconds)</div><input id="newDelay" type="number" min="0" max="60" step="0.1" value="3"></div><button onclick="createNew()">Create</button></div><div class="small" style="margin-top:10px">New links automatically use the same /assets/1.webp to /assets/18.webp landing images.</div></div><div id="rows"></div><div id="msg" class="msg"></div></div></div>
+<body>
+<div class="wrap">
+<section id="login" class="card login">
+  <h1>Admin Login</h1>
+  <p class="muted">Landing page manager</p>
+  <label>Password</label>
+  <input id="password" type="password" placeholder="Admin password">
+  <div style="height:12px"></div>
+  <button id="loginBtn" class="primary">Login</button>
+  <div id="loginStatus" class="status"></div>
+</section>
+
+<section id="app" class="hidden">
+<div class="shell">
+<aside class="card sidebar">
+  <div class="brand">
+    <div><h2>Landing Links</h2><div class="muted" id="adminHost"></div></div>
+    <button id="newBtn" class="primary">+ New</button>
+  </div>
+  <div id="pagesList" class="pages"></div>
+  <div style="height:14px"></div>
+  <button id="logoutBtn" class="secondary" style="width:100%">Logout</button>
+</aside>
+
+<main>
+  <div id="empty" class="card">
+    <h2>No link selected</h2>
+    <p class="muted">Select a landing link or create a new one.</p>
+  </div>
+
+  <div id="editor" class="hidden">
+    <div class="top">
+      <div>
+        <h1>Edit Landing Link</h1>
+        <div id="liveUrl" class="slugpreview"></div>
+      </div>
+      <div class="btnrow">
+        <button id="openBtn" class="secondary">Open Page ↗</button>
+        <button id="deleteBtn" class="danger">Delete</button>
+      </div>
+    </div>
+
+    <div class="card section">
+      <h3>Landing Settings</h3>
+      <div style="height:12px"></div>
+      <div class="grid">
+        <div>
+          <label>Slug</label>
+          <input id="slug" placeholder="new-link">
+          <div class="slugpreview"><span id="slugOrigin"></span>/<span id="slugText">...</span></div>
+        </div>
+        <div>
+          <label>Redirect Delay (seconds)</label>
+          <input id="delay" type="number" min="0" max="60" step="0.1" value="3">
+        </div>
+        <div class="full">
+          <label>Destination URL</label>
+          <input id="destination" type="url" placeholder="https://example.com/...">
+        </div>
+      </div>
+      <div style="height:16px"></div>
+      <div class="notice">Every slug uses the same landing design and the same shared images: <strong>/assets/1.webp</strong> to <strong>/assets/18.webp</strong>.</div>
+    </div>
+
+    <div class="card">
+      <div class="btnrow">
+        <button id="saveBtn" class="primary">Save All Changes</button>
+        <button id="reloadBtn" class="secondary">Reload</button>
+      </div>
+      <div id="status" class="status"></div>
+    </div>
+  </div>
+</main>
 </div>
+</section>
+</div>
+
 <script>
-async function login(){
- const password=document.getElementById("password").value;
- const r=await fetch("/api/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password})});
- if(!r.ok){document.getElementById("loginMsg").textContent="Wrong password";document.getElementById("loginMsg").className="msg error";return}
- load();
+const $=id=>document.getElementById(id);
+let password=sessionStorage.getItem("landing_admin_password")||"";
+let db={links:{}};
+let selected=null;
+let originalSlug=null;
+let persistedSlugs=new Set();
+
+const RESERVED=new Set(["admin","api","assets","functions","404","favicon.ico","robots.txt","sitemap.xml"]);
+const makeId=()=>{try{return crypto.randomUUID()}catch{return "link-"+Date.now()+"-"+Math.random().toString(36).slice(2)}};
+const cleanSlug=s=>String(s||"").toLowerCase().trim().replace(/[^a-z0-9-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80);
+const esc=s=>String(s||"").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+
+async function verifyPassword(){
+  const r=await fetch("/api/auth",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||"Wrong password");
 }
+
 async function load(){
- const r=await fetch("/api/config");
- if(!r.ok)return;
- const d=await r.json();document.getElementById("loginBox").style.display="none";document.getElementById("panel").style.display="block";
- document.getElementById("rows").innerHTML=d.rows.map(x=>`<div class="row"><div class="slug">/${x.slug}</div><input id="u-${x.slug}" value="${esc(x.destination)}"><div><input id="d-${x.slug}" type="number" min="0" max="60" step="0.1" value="${Number(x.delay||3000)/1000}"><div class="small">seconds</div></div><button onclick="save('${x.slug}')">Save</button></div>`).join("");
+  const r=await fetch("/api/config",{cache:"no-store"});
+  const d=await r.json();
+  if(!r.ok) throw new Error(d.error||"Could not load links");
+  db={links:d.links||{}};
+  for(const [slug,item] of Object.entries(db.links)){
+    if(!item.linkId)item.linkId="legacy-"+slug;
+  }
+  persistedSlugs=new Set(Object.keys(db.links));
+  renderList();
 }
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}\nfunction cleanSlug(s){return String(s||"").toLowerCase().trim().replace(/[^a-z0-9-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80)}\nfunction showNew(){const b=document.getElementById("newBox");b.style.display=b.style.display==="block"?"none":"block";if(b.style.display==="block")document.getElementById("newSlug").focus()}\nasync function createNew(){const slug=cleanSlug(document.getElementById("newSlug").value);const destination=document.getElementById("newDestination").value.trim();const seconds=Number(document.getElementById("newDelay").value);const m=document.getElementById("msg");if(!slug){m.textContent="Slug is required";m.className="msg error";return}if(!/^https?:\\/\\//i.test(destination)){m.textContent="Enter a valid destination URL";m.className="msg error";return}if(!Number.isFinite(seconds)||seconds<0||seconds>60){m.textContent="Delay must be between 0 and 60 seconds";m.className="msg error";return}m.textContent="Creating...";m.className="msg";const r=await fetch("/api/config",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({action:"upsert",slug,originalSlug:slug,destination,delay:Math.round(seconds*1000),isNew:true})});const d=await r.json().catch(()=>({}));if(!r.ok){m.textContent=d.error||"Create failed";m.className="msg error";return}document.getElementById("newBox").style.display="none";document.getElementById("newSlug").value="";document.getElementById("newDestination").value="";document.getElementById("newDelay").value="3";m.textContent="/"+slug+" created ✓";m.className="msg";await load()}
-async function save(slug){
- const destination=document.getElementById("u-"+slug).value;
- const seconds=Number(document.getElementById("d-"+slug).value);
- const delay=Math.round(seconds*1000);
- const r=await fetch("/api/config",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({slug,destination,delay})});
- const d=await r.json();const m=document.getElementById("msg");m.textContent=d.ok?`/${slug} saved ✓`:(d.error||"Save failed");m.className=d.ok?"msg":"msg error";
+
+function renderList(){
+  const box=$("pagesList");
+  box.innerHTML="";
+  const slugs=Object.keys(db.links||{}).sort();
+  if(!slugs.length){
+    box.innerHTML='<div class="muted">No landing links yet.</div>';
+    return;
+  }
+  for(const slug of slugs){
+    const el=document.createElement("div");
+    el.className="pageitem"+(selected===slug?" active":"");
+    el.innerHTML="<strong>/"+esc(slug)+"</strong><small>"+esc(db.links[slug].destination||"")+"</small>";
+    el.onclick=()=>selectLink(slug);
+    box.appendChild(el);
+  }
 }
-load();
+
+function selectLink(slug){
+  selected=slug;
+  originalSlug=slug;
+  const item=db.links[slug];
+  $("empty").classList.add("hidden");
+  $("editor").classList.remove("hidden");
+  $("slug").value=slug;
+  $("destination").value=item.destination||"";
+  $("delay").value=(Number(item.delay||0)/1000);
+  updateUrl();
+  renderList();
+}
+
+function newLink(){
+  let base="new-link",slug=base,i=2;
+  while(db.links[slug])slug=base+"-"+i++;
+  db.links[slug]={linkId:makeId(),destination:"https://example.com/",delay:3000};
+  selectLink(slug);
+  $("slug").select();
+}
+
+function slugProblem(slug){
+  if(!slug)return "Slug is required.";
+  if(RESERVED.has(slug))return "This slug is reserved.";
+  if(slug!==originalSlug && db.links[slug])return "This slug is already used.";
+  if(slug!==originalSlug && persistedSlugs.has(slug))return "This slug is still reserved by a saved link.";
+  return "";
+}
+
+function updateUrl(){
+  const s=cleanSlug($("slug").value);
+  $("slugText").textContent=s||"...";
+  $("liveUrl").textContent=s?location.origin+"/"+s:"";
+  const problem=slugProblem(s);
+  $("slug").style.borderColor=problem?"#ef476f":"";
+  $("slug").title=problem||"Slug available";
+}
+
+function collect(){
+  const current=db.links[originalSlug]||db.links[selected]||{};
+  const seconds=Number($("delay").value);
+  return {
+    linkId:current.linkId||makeId(),
+    destination:$("destination").value.trim(),
+    delay:Number.isFinite(seconds)&&seconds>=0?Math.round(seconds*1000):3000
+  };
+}
+
+function deleteLink(){
+  if(!selected)return;
+  if(!confirm("Delete /"+selected+" ?"))return;
+  delete db.links[selected];
+  selected=null;
+  originalSlug=null;
+  $("editor").classList.add("hidden");
+  $("empty").classList.remove("hidden");
+  renderList();
+  $("status").textContent="Link removed locally. Click Save All Changes to publish.";
+}
+
+async function saveAll(){
+  if(selected){
+    const newSlug=cleanSlug($("slug").value);
+    const problem=slugProblem(newSlug);
+    if(problem){$("status").textContent="❌ "+problem;return}
+
+    const item=collect();
+    if(!/^https?:\/\//i.test(item.destination)){
+      $("status").textContent="❌ Destination must start with http:// or https://.";
+      return;
+    }
+    if(item.delay<0||item.delay>60000){
+      $("status").textContent="❌ Delay must be between 0 and 60 seconds.";
+      return;
+    }
+
+    if(originalSlug&&originalSlug!==newSlug)delete db.links[originalSlug];
+    db.links[newSlug]=item;
+    selected=newSlug;
+    originalSlug=newSlug;
+  }
+
+  $("saveBtn").disabled=true;
+  $("status").textContent="Saving…";
+
+  try{
+    const r=await fetch("/api/save",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({password,links:db.links})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||"Save failed");
+    if(!d.verified)throw new Error("Save verification failed.");
+
+    $("status").textContent="✅ Saved successfully.";
+    await load();
+    if(selected&&db.links[selected])selectLink(selected);
+  }catch(e){
+    $("status").textContent="❌ "+e.message;
+  }finally{
+    $("saveBtn").disabled=false;
+  }
+}
+
+async function login(){
+  password=$("password").value;
+  if(!password){$("loginStatus").textContent="Enter your password.";return}
+  $("loginStatus").textContent="Checking…";
+  try{
+    await verifyPassword();
+    sessionStorage.setItem("landing_admin_password",password);
+    $("login").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    await load();
+    $("loginStatus").textContent="";
+  }catch(e){
+    $("loginStatus").textContent="❌ "+e.message;
+  }
+}
+
+$("loginBtn").onclick=login;
+$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+$("logoutBtn").onclick=()=>{sessionStorage.removeItem("landing_admin_password");location.reload()};
+$("newBtn").onclick=newLink;
+$("deleteBtn").onclick=deleteLink;
+$("saveBtn").onclick=saveAll;
+$("reloadBtn").onclick=()=>load().then(()=>{if(selected&&db.links[selected])selectLink(selected)}).catch(e=>$("status").textContent="❌ "+e.message);
+$("slug").addEventListener("input",updateUrl);
+$("openBtn").onclick=()=>{const s=cleanSlug($("slug").value);if(s)window.open("/"+s,"_blank")};
+
+$("adminHost").textContent=location.host;
+$("slugOrigin").textContent=location.origin;
+
+if(password){
+  $("password").value=password;
+  verifyPassword()
+    .then(()=>{$("login").classList.add("hidden");$("app").classList.remove("hidden");return load()})
+    .catch(()=>{sessionStorage.removeItem("landing_admin_password");password=""});
+}
 </script>
-</body></html>
+</body>
+</html>
