@@ -1,3 +1,106 @@
+import bundledConfig from "../data/config.json";
+
+const CONFIG_FRESH_MS = 60000;
+const CONFIG_RETRY_MS = 30000;
+const CONFIG_TIMEOUT_MS = 3500;
+const CONFIG_STALE_SECONDS = 604800;
+let memoryConfig = null;
+let refreshPromise = null;
+let nextRetryAt = 0;
+
+function validConfig(db) {
+  return db !== null && typeof db === "object" && !Array.isArray(db) && Object.keys(db).length > 0;
+}
+function configCacheKey(request) {
+  const url = new URL(request.url);
+  url.pathname = "/__internal_bio_config_v2";
+  url.search = "";
+  return new Request(url.toString(), { method: "GET" });
+}
+async function readEdgeConfig(request) {
+  if (typeof caches === "undefined" || !caches.default) return null;
+  try {
+    const hit = await caches.default.match(configCacheKey(request));
+    if (!hit) return null;
+    const entry = await hit.json();
+    if (entry && validConfig(entry.config) && Number.isFinite(entry.fetchedAt)) return entry;
+  } catch (error) {
+    console.warn("[bio-config] cache_read_failed " + String(error));
+  }
+  return null;
+}
+async function saveEdgeConfig(request, entry) {
+  if (typeof caches === "undefined" || !caches.default) return;
+  try {
+    await caches.default.put(configCacheKey(request),
+      new Response(JSON.stringify(entry), {
+        headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=" + CONFIG_STALE_SECONDS }
+      })
+    );
+  } catch (error) {
+    console.warn("[bio-config] cache_write_failed " + String(error));
+  }
+}
+async function fetchGitHubConfig(env) {
+  if (!env.GITHUB_OWNER || !env.GITHUB_REPO) throw new Error("GitHub environment configuration is missing");
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), CONFIG_TIMEOUT_MS);
+  try {
+    const branch = env.GITHUB_BRANCH || "main";
+    const headers = { "Accept": "application/vnd.github+json", "User-Agent": "bio-pages-config", "Cache-Control": "no-cache" };
+    if (env.GITHUB_TOKEN) headers.Authorization = "Bearer " + env.GITHUB_TOKEN;
+    const apiPath = "/repos/" + encodeURIComponent(env.GITHUB_OWNER) + "/" + encodeURIComponent(env.GITHUB_REPO) + "/contents/data/config.json?ref=" + encodeURIComponent(branch) + "&t=" + Date.now();
+    const response = await fetch("https://api.github.com" + apiPath, { headers, signal: controller.signal });
+    if (!response.ok) throw new Error("GitHub returned HTTP " + response.status);
+    const json = await response.json();
+    const encoded = String(json.content || "").replace(/\s/g, "");
+    const bytes = Uint8Array.from(atob(encoded), char => char.charCodeAt(0));
+    const config = JSON.parse(new TextDecoder().decode(bytes));
+    if (!validConfig(config)) throw new Error("Invalid GitHub config structure");
+    return config;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+async function refreshConfig(env, request) {
+  if (refreshPromise) return refreshPromise;
+  refreshPromise = (async () => {
+    try {
+      const config = await fetchGitHubConfig(env);
+      const entry = { config, fetchedAt: Date.now() };
+      memoryConfig = entry;
+      nextRetryAt = 0;
+      await saveEdgeConfig(request, entry);
+      return entry;
+    } catch (error) {
+      nextRetryAt = Date.now() + CONFIG_RETRY_MS;
+      console.error("[bio-config] github_refresh_failed repo=" + (env.GITHUB_REPO || "unknown") + " reason=" + String(error && error.message || error));
+      return null;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+  return refreshPromise;
+}
+async function loadConfigCached(env, request, context) {
+  const now = Date.now();
+  if (!memoryConfig) memoryConfig = await readEdgeConfig(request);
+  if (memoryConfig && now - memoryConfig.fetchedAt < CONFIG_FRESH_MS) return memoryConfig.config;
+  if (memoryConfig) {
+    if (now >= nextRetryAt) {
+      const update = refreshConfig(env, request);
+      if (context && typeof context.waitUntil === "function") context.waitUntil(update);
+      else await update;
+    }
+    return memoryConfig.config;
+  }
+  const fresh = await refreshConfig(env, request);
+  if (fresh) return fresh.config;
+  console.warn("[bio-config] using bundled build snapshot repo=" + (env.GITHUB_REPO || "unknown"));
+  memoryConfig = { config: bundledConfig, fetchedAt: 0 };
+  return memoryConfig.config;
+}
+
 const RESERVED_SLUGS = new Set(["admin","api","assets","functions","404","favicon.ico","robots.txt","sitemap.xml"]);
 
 function cleanSlug(value) {
@@ -91,45 +194,13 @@ function landingHtml(slug, destination, delay, desktopDestination) {
 </html>`;
 }
 
-async function loadConfig(env) {
-  if (!env.GITHUB_OWNER || !env.GITHUB_REPO) return {};
-
-  const branch = env.GITHUB_BRANCH || "main";
-  const headers = {
-    "Accept": "application/vnd.github+json",
-    "User-Agent": "kiddlex-landing",
-    "Cache-Control": "no-cache"
-  };
-  if (env.GITHUB_TOKEN) headers["Authorization"] = "Bearer " + env.GITHUB_TOKEN;
-
-  try {
-    const url =
-      "https://api.github.com/repos/" +
-      encodeURIComponent(env.GITHUB_OWNER) + "/" +
-      encodeURIComponent(env.GITHUB_REPO) +
-      "/contents/data/config.json?ref=" +
-      encodeURIComponent(branch) +
-      "&t=" + Date.now();
-
-    const r = await fetch(url, { headers });
-    if (!r.ok) return {};
-
-    const j = await r.json();
-    const raw = atob(String(j.content || "").replace(/\n/g, ""));
-    const bytes = Uint8Array.from(raw, c => c.charCodeAt(0));
-    return JSON.parse(new TextDecoder().decode(bytes) || "{}");
-  } catch {
-    return {};
-  }
-}
-
-export async function onRequest({ params, env }) {
+export async function onRequest({ params, env, request, context }) {
   const slug = cleanSlug(params.slug);
   if (!slug || RESERVED_SLUGS.has(slug)) {
     return new Response("Not found", { status: 404 });
   }
 
-  const config = await loadConfig(env);
+  const config = await loadConfigCached(env,request,context);
   const item = config[slug];
 
   if (!item || !item.destination) {
