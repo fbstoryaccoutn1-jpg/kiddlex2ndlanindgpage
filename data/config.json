@@ -2,49 +2,54 @@
   "deru": {
     "linkId": "legacy-deru",
     "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=TANK",
-    "delay": 3000,
-    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK"
+    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK",
+    "delay": 3000
   },
   "gyro": {
     "linkId": "legacy-gyro",
     "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=TANK",
-    "delay": 3000,
-    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK"
+    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK",
+    "delay": 3000
   },
   "hemari": {
     "linkId": "legacy-hemari",
     "destination": "https://cric.booss12.com/?utm_source=Deepal&utm_medium=Vicky",
-    "delay": 3000,
-    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky"
+    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky",
+    "delay": 3000
   },
   "mari": {
     "linkId": "legacy-mari",
     "destination": "https://cric.booss12.com/?utm_source=Deepal&utm_medium=Vicky",
-    "delay": 3000,
-    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky"
+    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky",
+    "delay": 3000
   },
   "million": {
     "linkId": "legacy-million",
     "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=TANK",
-    "delay": 3000,
-    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK"
+    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK",
+    "delay": 3000
   },
   "nari": {
     "linkId": "legacy-nari",
     "destination": "https://cric.booss12.com/?utm_source=Deepal&utm_medium=Vicky",
-    "delay": 3000,
-    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky"
+    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky",
+    "delay": 3000
   },
   "tank": {
     "linkId": "legacy-tank",
     "destination": "https://bb.urlxx341.com?utm_source=jack&utm_medium=TANK",
-    "delay": 3000,
-    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK"
+    "desktopDestination": "https://www.google.com/?utm_source=jack&utm_medium=TANK",
+    "delay": 3000
   },
   "zuberi": {
     "linkId": "legacy-zuberi",
     "destination": "https://cric.booss12.com/?utm_source=Deepal&utm_medium=Vicky",
-    "delay": 3000,
-    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky"
+    "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky",
+    "delay": 3000
+  },
+  "marryusid": {
+    "linkId": "13c16742-bb95-42cd-92c7-80416f9b8d43",
+    "destination": "https://bb.urlxx344.com/?utm_source=jack&utm_medium=jack",
+    "delay": 500
   }
 }
