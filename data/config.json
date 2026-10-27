@@ -15,7 +15,7 @@
     "linkId": "legacy-hemari",
     "destination": "https://cric.booss12.com/?utm_source=Deepal&utm_medium=Vicky",
     "desktopDestination": "https://www.google.com/?utm_source=Deepal&utm_medium=Vicky",
-    "delay": 3000
+    "delay": 2000
   },
   "mari": {
     "linkId": "legacy-mari",
